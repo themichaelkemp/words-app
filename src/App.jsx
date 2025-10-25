@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 // Import icons (using Unicode symbols for now)
@@ -30,13 +30,76 @@ function App() {
   ])
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [rhymes, setRhymes] = useState({
+    perfect: [],
+    near: [],
+    slant: [],
+    similar: []
+  })
+  const [isLoadingRhymes, setIsLoadingRhymes] = useState(false)
+  const [saveMessage, setSaveMessage] = useState('')
 
-  // Calculate syllable count (simplified version)
+  // Load saved data from localStorage on mount
+  useEffect(() => {
+    const savedLyrics = localStorage.getItem('currentLyrics')
+    const savedSongs = localStorage.getItem('songs')
+
+    if (savedLyrics) {
+      setLyrics(savedLyrics)
+    }
+    if (savedSongs) {
+      try {
+        setSongs(JSON.parse(savedSongs))
+      } catch (e) {
+        console.error('Error loading songs:', e)
+      }
+    }
+  }, [])
+
+  // Auto-save lyrics as user types (with debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (lyrics) {
+        localStorage.setItem('currentLyrics', lyrics)
+      }
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [lyrics])
+
+  // Save songs to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('songs', JSON.stringify(songs))
+  }, [songs])
+
+  // Improved syllable counter
   const countSyllables = (word) => {
-    word = word.toLowerCase().replace(/[^a-z]/g, '')
+    if (!word || word.length === 0) return 0
+
+    word = word.toLowerCase().trim()
+
+    // Remove non-alphabetic characters
+    word = word.replace(/[^a-z]/g, '')
+
     if (word.length <= 3) return 1
-    const vowels = word.match(/[aeiouy]+/g)
-    return vowels ? vowels.length : 1
+
+    // Remove silent 'e' at the end
+    word = word.replace(/e$/, '')
+
+    // Count vowel groups
+    const vowelGroups = word.match(/[aeiouy]+/g)
+    let syllables = vowelGroups ? vowelGroups.length : 0
+
+    // Handle special cases
+    if (word.endsWith('le') && word.length > 2) {
+      syllables++
+    }
+
+    // Words like "real" that have two vowels but one syllable
+    if (word.match(/[aeiou]{2}/) && word.length <= 4) {
+      syllables = Math.max(1, syllables - 1)
+    }
+
+    return syllables || 1
   }
 
   const getLinesWithSyllables = (text) => {
@@ -47,6 +110,93 @@ function App() {
       return { text: line, syllables, words }
     })
   }
+
+  // Save current lyrics as a new song
+  const handleSaveLyrics = () => {
+    if (!lyrics.trim()) {
+      setSaveMessage('Please write some lyrics first!')
+      setTimeout(() => setSaveMessage(''), 3000)
+      return
+    }
+
+    const title = prompt('Enter a title for your song:')
+    if (!title) return
+
+    const newSong = {
+      id: Date.now(),
+      title: title.trim(),
+      date: new Date().toISOString().split('T')[0],
+      lyrics: lyrics
+    }
+
+    setSongs([newSong, ...songs])
+    setSaveMessage('Song saved successfully!')
+    setTimeout(() => setSaveMessage(''), 3000)
+
+    // Optionally clear the editor
+    // setLyrics('')
+  }
+
+  // Fetch rhymes from Datamuse API
+  const fetchRhymes = async (word) => {
+    if (!word || word.trim().length === 0) {
+      setRhymes({ perfect: [], near: [], slant: [], similar: [] })
+      return
+    }
+
+    setIsLoadingRhymes(true)
+
+    try {
+      // Datamuse API endpoints
+      const perfectUrl = `https://api.datamuse.com/words?rel_rhy=${word}&max=20`
+      const nearUrl = `https://api.datamuse.com/words?rel_nry=${word}&max=15`
+      const soundsLikeUrl = `https://api.datamuse.com/words?sl=${word}&max=15`
+
+      const [perfectRes, nearRes, soundsRes] = await Promise.all([
+        fetch(perfectUrl),
+        fetch(nearUrl),
+        fetch(soundsLikeUrl)
+      ])
+
+      const perfect = await perfectRes.json()
+      const near = await nearRes.json()
+      const sounds = await soundsRes.json()
+
+      // Filter out duplicates and the search word itself
+      const filterWords = (arr) =>
+        arr
+          .filter(item => item.word.toLowerCase() !== word.toLowerCase())
+          .map(item => item.word)
+          .filter((word, index, self) => self.indexOf(word) === index)
+
+      setRhymes({
+        perfect: filterWords(perfect),
+        near: filterWords(near),
+        slant: filterWords(near).slice(0, 10),
+        similar: filterWords(sounds)
+      })
+    } catch (error) {
+      console.error('Error fetching rhymes:', error)
+      setRhymes({
+        perfect: ['Error loading rhymes. Please try again.'],
+        near: [],
+        slant: [],
+        similar: []
+      })
+    } finally {
+      setIsLoadingRhymes(false)
+    }
+  }
+
+  // Fetch rhymes when search query changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery && currentScreen === 'dictionary') {
+        fetchRhymes(searchQuery)
+      }
+    }, 500) // Debounce API calls
+    return () => clearTimeout(timer)
+  }, [searchQuery, currentScreen])
 
   // Navigation component
   const Navigation = () => {
@@ -133,10 +283,20 @@ function App() {
       <div className="screen home-screen">
         <div className="screen-header">
           <h2>Write Your Lyrics</h2>
-          <button className="btn-primary" aria-label="Save lyrics">
+          <button
+            className="btn-primary"
+            onClick={handleSaveLyrics}
+            aria-label="Save lyrics"
+          >
             <span>{Icons.save}</span> Save
           </button>
         </div>
+
+        {saveMessage && (
+          <div className="save-message">
+            {saveMessage}
+          </div>
+        )}
 
         <div className="lyric-editor">
           <div className="editor-display">
@@ -173,7 +333,9 @@ function App() {
             className="editor-input"
             value={lyrics}
             onChange={(e) => setLyrics(e.target.value)}
-            placeholder="Start writing your lyrics here...&#10;Each line will show syllable counts&#10;Click any word to find rhymes"
+            placeholder="Start writing your lyrics here...
+Each line will show syllable counts
+Click any word to find rhymes"
             aria-label="Lyric text editor"
           />
         </div>
@@ -301,13 +463,6 @@ function App() {
 
   // Rhyming Dictionary Screen
   const DictionaryScreen = () => {
-    const rhymeTypes = {
-      perfect: ['day', 'way', 'say', 'play', 'stay', 'bay', 'ray', 'may'],
-      near: ['fade', 'made', 'paid', 'braid', 'shade'],
-      slant: ['deed', 'need', 'feed', 'lead', 'read'],
-      similar: ['daily', 'crazy', 'hazy', 'lazy', 'maybe']
-    }
-
     return (
       <div className="screen dictionary-screen">
         <div className="screen-header">
@@ -326,48 +481,109 @@ function App() {
           />
         </div>
 
-        {searchQuery && (
+        {isLoadingRhymes && (
           <div className="search-results">
-            <p className="results-info">Showing rhymes for: <strong>{searchQuery}</strong></p>
+            <p className="results-info">Loading rhymes...</p>
+          </div>
+        )}
+
+        {searchQuery && !isLoadingRhymes && (
+          <div className="search-results">
+            <p className="results-info">
+              Showing rhymes for: <strong>{searchQuery}</strong>
+            </p>
+          </div>
+        )}
+
+        {!searchQuery && !isLoadingRhymes && (
+          <div className="search-results">
+            <p className="results-info">
+              Type a word above or click any word in your lyrics to find rhymes!
+            </p>
           </div>
         )}
 
         <div className="rhyme-categories">
-          <div className="rhyme-category">
-            <h3>Perfect Rhymes</h3>
-            <div className="word-list">
-              {rhymeTypes.perfect.map((word, idx) => (
-                <button key={idx} className="word-tag">{word}</button>
-              ))}
+          {rhymes.perfect.length > 0 && (
+            <div className="rhyme-category">
+              <h3>Perfect Rhymes ({rhymes.perfect.length})</h3>
+              <div className="word-list">
+                {rhymes.perfect.map((word, idx) => (
+                  <button
+                    key={idx}
+                    className="word-tag"
+                    onClick={() => setSearchQuery(word)}
+                  >
+                    {word}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="rhyme-category">
-            <h3>Near Rhymes</h3>
-            <div className="word-list">
-              {rhymeTypes.near.map((word, idx) => (
-                <button key={idx} className="word-tag">{word}</button>
-              ))}
+          {rhymes.near.length > 0 && (
+            <div className="rhyme-category">
+              <h3>Near Rhymes ({rhymes.near.length})</h3>
+              <div className="word-list">
+                {rhymes.near.map((word, idx) => (
+                  <button
+                    key={idx}
+                    className="word-tag"
+                    onClick={() => setSearchQuery(word)}
+                  >
+                    {word}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="rhyme-category">
-            <h3>Slant Rhymes</h3>
-            <div className="word-list">
-              {rhymeTypes.slant.map((word, idx) => (
-                <button key={idx} className="word-tag">{word}</button>
-              ))}
+          {rhymes.slant.length > 0 && (
+            <div className="rhyme-category">
+              <h3>Slant Rhymes ({rhymes.slant.length})</h3>
+              <div className="word-list">
+                {rhymes.slant.map((word, idx) => (
+                  <button
+                    key={idx}
+                    className="word-tag"
+                    onClick={() => setSearchQuery(word)}
+                  >
+                    {word}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="rhyme-category">
-            <h3>Similar Sounds</h3>
-            <div className="word-list">
-              {rhymeTypes.similar.map((word, idx) => (
-                <button key={idx} className="word-tag">{word}</button>
-              ))}
+          {rhymes.similar.length > 0 && (
+            <div className="rhyme-category">
+              <h3>Similar Sounds ({rhymes.similar.length})</h3>
+              <div className="word-list">
+                {rhymes.similar.map((word, idx) => (
+                  <button
+                    key={idx}
+                    className="word-tag"
+                    onClick={() => setSearchQuery(word)}
+                  >
+                    {word}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {searchQuery &&
+            !isLoadingRhymes &&
+            rhymes.perfect.length === 0 &&
+            rhymes.near.length === 0 &&
+            rhymes.slant.length === 0 &&
+            rhymes.similar.length === 0 && (
+              <div className="search-results">
+                <p className="results-info">
+                  No rhymes found for "<strong>{searchQuery}</strong>". Try a different word!
+                </p>
+              </div>
+            )}
         </div>
       </div>
     )
