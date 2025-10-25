@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import './App.css'
 
 // Import icons (using Unicode symbols for now)
@@ -277,7 +277,15 @@ function App() {
 
   // Home Screen - Lyric Writing Interface
   const HomeScreen = () => {
+    const textareaRef = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
+
+    const handleEditorClick = (e) => {
+      // Don't focus if clicking on a word (let word click work)
+      if (!e.target.classList.contains('clickable')) {
+        textareaRef.current?.focus()
+      }
+    }
 
     return (
       <div className="screen home-screen">
@@ -298,7 +306,7 @@ function App() {
           </div>
         )}
 
-        <div className="lyric-editor">
+        <div className="lyric-editor" onClick={handleEditorClick}>
           <div className="editor-display">
             {linesWithSyllables.map((line, idx) => (
               <div key={idx} className="lyric-line">
@@ -330,6 +338,7 @@ function App() {
           </div>
 
           <textarea
+            ref={textareaRef}
             className="editor-input"
             value={lyrics}
             onChange={(e) => setLyrics(e.target.value)}
@@ -337,6 +346,7 @@ function App() {
 Each line will show syllable counts
 Click any word to find rhymes"
             aria-label="Lyric text editor"
+            autoFocus
           />
         </div>
 
