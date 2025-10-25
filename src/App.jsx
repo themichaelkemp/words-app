@@ -49,50 +49,57 @@ function App() {
   }
 
   // Navigation component
-  const Navigation = () => (
-    <nav className="sidebar">
-      <button
-        className={`nav-btn ${currentScreen === 'home' ? 'active' : ''}`}
-        onClick={() => setCurrentScreen('home')}
-        aria-label="Home - Lyric Writing"
-      >
-        <span className="nav-icon">{Icons.home}</span>
-        <span className="nav-label">Write</span>
-      </button>
-      <button
-        className={`nav-btn ${currentScreen === 'songbook' ? 'active' : ''}`}
-        onClick={() => setCurrentScreen('songbook')}
-        aria-label="Songbook"
-      >
-        <span className="nav-icon">{Icons.book}</span>
-        <span className="nav-label">Songbook</span>
-      </button>
-      <button
-        className={`nav-btn ${currentScreen === 'forms' ? 'active' : ''}`}
-        onClick={() => setCurrentScreen('forms')}
-        aria-label="Song Forms"
-      >
-        <span className="nav-icon">{Icons.template}</span>
-        <span className="nav-label">Forms</span>
-      </button>
-      <button
-        className={`nav-btn ${currentScreen === 'rhyme-schemes' ? 'active' : ''}`}
-        onClick={() => setCurrentScreen('rhyme-schemes')}
-        aria-label="Rhyme Schemes"
-      >
-        <span className="nav-icon">{Icons.rhyme}</span>
-        <span className="nav-label">Schemes</span>
-      </button>
-      <button
-        className={`nav-btn ${currentScreen === 'dictionary' ? 'active' : ''}`}
-        onClick={() => setCurrentScreen('dictionary')}
-        aria-label="Rhyming Dictionary"
-      >
-        <span className="nav-icon">{Icons.dictionary}</span>
-        <span className="nav-label">Dictionary</span>
-      </button>
-    </nav>
-  )
+  const Navigation = () => {
+    const handleNavClick = (screen) => {
+      setCurrentScreen(screen)
+      setMobileMenuOpen(false)
+    }
+
+    return (
+      <nav className="sidebar">
+        <button
+          className={`nav-btn ${currentScreen === 'home' ? 'active' : ''}`}
+          onClick={() => handleNavClick('home')}
+          aria-label="Home - Lyric Writing"
+        >
+          <span className="nav-icon">{Icons.home}</span>
+          <span className="nav-label">Write</span>
+        </button>
+        <button
+          className={`nav-btn ${currentScreen === 'songbook' ? 'active' : ''}`}
+          onClick={() => handleNavClick('songbook')}
+          aria-label="Songbook"
+        >
+          <span className="nav-icon">{Icons.book}</span>
+          <span className="nav-label">Songbook</span>
+        </button>
+        <button
+          className={`nav-btn ${currentScreen === 'forms' ? 'active' : ''}`}
+          onClick={() => handleNavClick('forms')}
+          aria-label="Song Forms"
+        >
+          <span className="nav-icon">{Icons.template}</span>
+          <span className="nav-label">Forms</span>
+        </button>
+        <button
+          className={`nav-btn ${currentScreen === 'rhyme-schemes' ? 'active' : ''}`}
+          onClick={() => handleNavClick('rhyme-schemes')}
+          aria-label="Rhyme Schemes"
+        >
+          <span className="nav-icon">{Icons.rhyme}</span>
+          <span className="nav-label">Schemes</span>
+        </button>
+        <button
+          className={`nav-btn ${currentScreen === 'dictionary' ? 'active' : ''}`}
+          onClick={() => handleNavClick('dictionary')}
+          aria-label="Rhyming Dictionary"
+        >
+          <span className="nav-icon">{Icons.dictionary}</span>
+          <span className="nav-label">Dictionary</span>
+        </button>
+      </nav>
+    )
+  }
 
   // Top bar component
   const TopBar = () => (
@@ -137,18 +144,23 @@ function App() {
               <div key={idx} className="lyric-line">
                 <span className="line-number">{idx + 1}</span>
                 <span className="line-text">
-                  {line.words.map((word, wIdx) => (
-                    <span
-                      key={wIdx}
-                      className="word clickable"
-                      onClick={() => {
-                        setSelectedWord(word)
-                        setCurrentScreen('dictionary')
-                      }}
-                    >
-                      {word}{' '}
-                    </span>
-                  ))}
+                  {line.words.length > 0 ? (
+                    line.words.map((word, wIdx) => (
+                      <span
+                        key={wIdx}
+                        className="word clickable"
+                        onClick={() => {
+                          setSelectedWord(word)
+                          setSearchQuery(word)
+                          setCurrentScreen('dictionary')
+                        }}
+                      >
+                        {word}{' '}
+                      </span>
+                    ))
+                  ) : (
+                    <span>&nbsp;</span>
+                  )}
                 </span>
                 <span className="syllable-count" title="Syllable count">
                   {line.syllables > 0 && `${line.syllables} syl`}
@@ -376,6 +388,13 @@ function App() {
     <div className="app">
       <TopBar />
       <div className="app-body">
+        {mobileMenuOpen && (
+          <div
+            className="mobile-overlay"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
         <div className={`sidebar-wrapper ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <Navigation />
         </div>
