@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './App.css'
 
 // Import icons (using Unicode symbols for now)
@@ -138,7 +138,7 @@ function App() {
   }
 
   // Fetch rhymes from Datamuse API
-  const fetchRhymes = async (word) => {
+  const fetchRhymes = useCallback(async (word) => {
     if (!word || word.trim().length === 0) {
       setRhymes({ perfect: [], near: [], slant: [], similar: [] })
       return
@@ -186,7 +186,7 @@ function App() {
     } finally {
       setIsLoadingRhymes(false)
     }
-  }
+  }, [])
 
   // Fetch rhymes when search query changes
   useEffect(() => {
@@ -196,7 +196,7 @@ function App() {
       }
     }, 500) // Debounce API calls
     return () => clearTimeout(timer)
-  }, [searchQuery, currentScreen])
+  }, [searchQuery, currentScreen, fetchRhymes])
 
   // Navigation component
   const Navigation = () => {
