@@ -281,42 +281,32 @@ function App() {
 
   // Home Screen - Lyric Writing Interface
   const HomeScreen = () => {
-    const textareaRef = useRef(null)
-    const simplifiedRef = useRef(null)
-    const minimalRef = useRef(null)
+    const editorRef = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
 
     // Callback ref to track when textarea is attached and restore cursor
     // Uses App-level pendingCursorPos ref to survive re-renders
-    const minimalCallbackRef = useCallback((element) => {
-      console.log('📌 Callback ref called, element:', !!element, 'pendingCursorPos:', pendingCursorPos.current)
-      minimalRef.current = element
+    const editorCallbackRef = useCallback((element) => {
+      editorRef.current = element
 
       if (element && pendingCursorPos.current !== null) {
-        console.log('✅ Restoring pending cursor position:', pendingCursorPos.current)
         element.setSelectionRange(pendingCursorPos.current, pendingCursorPos.current)
         element.focus()
-        console.log('✅ Cursor restored, focused?', document.activeElement === element)
         pendingCursorPos.current = null
-      } else if (element) {
-        console.log('❌ Not restoring - pendingCursorPos is null')
       }
     }, [pendingCursorPos])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
       if (!e.target.classList.contains('clickable')) {
-        textareaRef.current?.focus()
+        editorRef.current?.focus()
       }
     }
 
-    const handleMinimalChange = (e) => {
+    const handleLyricChange = (e) => {
       // Save cursor position BEFORE state update
       pendingCursorPos.current = e.target.selectionStart
-      console.log('⭐ MINIMAL BEFORE:', e.target.value)
-      console.log('⭐ Cursor at position:', pendingCursorPos.current)
-
-      // Update state normally (no flushSync)
+      // Update lyrics state
       setLyrics(e.target.value)
     }
 
@@ -339,36 +329,39 @@ function App() {
           </div>
         )}
 
-        {/* DEBUG TEST - Remove this after testing */}
-        <div style={{ background: 'yellow', padding: '20px', margin: '20px 0' }}>
-          <h3>TEST TEXTAREA (Pure HTML, NO React):</h3>
-          <textarea
-            id="pure-html-test"
-            style={{ width: '100%', fontSize: '20px', padding: '10px' }}
-            dir="ltr"
-            placeholder="Type here to test..."
-            onInput={(e) => {
-              document.getElementById('pure-output').textContent = e.target.value
-              document.getElementById('pure-codes').textContent = [...e.target.value].map(c => c.charCodeAt(0)).join(', ')
-            }}
-          />
-          <p>Raw value: <span id="pure-output"></span></p>
-          <p>Char codes: <span id="pure-codes"></span></p>
-        </div>
-
-        {/* COMPLETELY MINIMAL TEST */}
-        <div style={{ background: 'cyan', padding: '20px', borderRadius: '10px' }}>
-          <h3>BARE BONES textarea WITH cursor fix:</h3>
-          <textarea
-            ref={minimalCallbackRef}
-            value={lyrics}
-            onChange={handleMinimalChange}
-            style={{ width: '100%', minHeight: '200px', fontSize: '16px', padding: '10px' }}
-          />
-          <div>
-            <p>Lyrics state: {lyrics}</p>
-            <p>Length: {lyrics.length}</p>
+        {/* Main Lyric Editor */}
+        <div className="editor-container" onClick={handleEditorClick}>
+          <div className="editor-overlay">
+            {linesWithSyllables.map((line, lineIndex) => (
+              <div key={lineIndex} className="editor-line">
+                <span className="syllable-count">{line.totalSyllables}</span>
+                <div className="line-content">
+                  {line.words.map((wordData, wordIndex) => (
+                    <span key={wordIndex}>
+                      <span
+                        className="clickable"
+                        onClick={() => setSelectedWord(wordData.word)}
+                      >
+                        {wordData.word}
+                      </span>
+                      {wordData.space}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {lyrics === '' && (
+              <div className="placeholder">Start writing your lyrics here...</div>
+            )}
           </div>
+          <textarea
+            ref={editorCallbackRef}
+            value={lyrics}
+            onChange={handleLyricChange}
+            className="editor-input"
+            placeholder="Start writing your lyrics here..."
+            aria-label="Lyric editor"
+          />
         </div>
 
         {selectedWord && (
