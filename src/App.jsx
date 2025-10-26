@@ -320,12 +320,19 @@ function App() {
 
         {/* DEBUG TEST - Remove this after testing */}
         <div style={{ background: 'yellow', padding: '20px', margin: '20px 0' }}>
-          <h3>TEST TEXTAREA (should type normally):</h3>
+          <h3>TEST TEXTAREA (Pure HTML, NO React):</h3>
           <textarea
+            id="pure-html-test"
             style={{ width: '100%', fontSize: '20px', padding: '10px' }}
             dir="ltr"
             placeholder="Type here to test..."
+            onInput={(e) => {
+              document.getElementById('pure-output').textContent = e.target.value
+              document.getElementById('pure-codes').textContent = [...e.target.value].map(c => c.charCodeAt(0)).join(', ')
+            }}
           />
+          <p>Raw value: <span id="pure-output"></span></p>
+          <p>Char codes: <span id="pure-codes"></span></p>
         </div>
 
         {/* TEMPORARY: Testing without overlay */}
