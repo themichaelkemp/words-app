@@ -305,7 +305,9 @@ function App() {
       // Restore cursor position immediately after synchronous update using e.target
       console.log('🎯 IMMEDIATELY restoring cursor to:', cursorPos)
       textareaElement.setSelectionRange(cursorPos, cursorPos)
+      textareaElement.focus()
       console.log('✅ Cursor restored to position:', textareaElement.selectionStart)
+      console.log('✅ Textarea focused?', document.activeElement === textareaElement)
     }
 
     return (
