@@ -303,9 +303,12 @@ function App() {
 
       // Restore cursor position immediately after synchronous update
       console.log('🎯 IMMEDIATELY restoring cursor to:', cursorPos)
+      console.log('🎯 minimalRef.current exists?', !!minimalRef.current)
       if (minimalRef.current) {
         minimalRef.current.setSelectionRange(cursorPos, cursorPos)
-        console.log('✅ Cursor restored!')
+        console.log('✅ Cursor restored to position:', minimalRef.current.selectionStart)
+      } else {
+        console.log('❌ ERROR: minimalRef.current is null!')
       }
     }
 
