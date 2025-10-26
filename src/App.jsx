@@ -43,6 +43,7 @@ function App() {
   // Refs to track pending cursor positions across re-renders
   const pendingCursorPos = useRef(null)
   const pendingRhymeCursorPos = useRef(null)
+  const pendingDictCursorPos = useRef(null)
 
   // Load saved data from localStorage on mount
   useEffect(() => {
@@ -524,6 +525,23 @@ function App() {
 
   // Rhyming Dictionary Screen
   const DictionaryScreen = () => {
+    const dictInputRef = useRef(null)
+
+    // Callback ref for dictionary search input
+    const dictInputCallbackRef = useCallback((element) => {
+      dictInputRef.current = element
+      if (element && pendingDictCursorPos.current !== null) {
+        element.setSelectionRange(pendingDictCursorPos.current, pendingDictCursorPos.current)
+        element.focus()
+        pendingDictCursorPos.current = null
+      }
+    }, [])
+
+    const handleDictInputChange = (e) => {
+      pendingDictCursorPos.current = e.target.selectionStart
+      setSearchQuery(e.target.value)
+    }
+
     return (
       <div className="screen dictionary-screen">
         <div className="screen-header">
@@ -533,10 +551,11 @@ function App() {
         <div className="search-bar">
           <span className="search-icon">{Icons.search}</span>
           <input
+            ref={dictInputCallbackRef}
             type="text"
             placeholder="Search for rhymes..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleDictInputChange}
             className="search-input"
             aria-label="Search for rhymes"
           />
