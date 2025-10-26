@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import './App.css'
 
 // Import icons (using Unicode symbols for now)
@@ -284,8 +284,9 @@ function App() {
     const linesWithSyllables = getLinesWithSyllables(lyrics)
 
     // Preserve and restore cursor position after state updates
-    useEffect(() => {
-      console.log('🔄 useEffect RUNNING! lyrics changed to:', lyrics)
+    // Using useLayoutEffect to run synchronously after DOM updates
+    useLayoutEffect(() => {
+      console.log('🔄 useLayoutEffect RUNNING! lyrics changed to:', lyrics)
       console.log('🔄 minimalRef.current exists?', !!minimalRef.current)
       console.log('🔄 cursorPositionRef.current:', cursorPositionRef.current)
 
