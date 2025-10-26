@@ -316,50 +316,26 @@ function App() {
           />
         </div>
 
-        <div className="lyric-editor" onClick={handleEditorClick}>
-          <div className="editor-display">
-            {linesWithSyllables.map((line, idx) => (
-              <div key={idx} className="lyric-line">
-                <span className="line-number">{idx + 1}</span>
-                <span className="line-text">
-                  {line.words.length > 0 ? (
-                    line.words.map((word, wIdx) => (
-                      <span
-                        key={wIdx}
-                        className="word clickable"
-                        onClick={() => {
-                          setSelectedWord(word)
-                          setSearchQuery(word)
-                          setCurrentScreen('dictionary')
-                        }}
-                      >
-                        {word}{' '}
-                      </span>
-                    ))
-                  ) : (
-                    <span>&nbsp;</span>
-                  )}
-                </span>
-                <span className="syllable-count" title="Syllable count">
-                  {line.syllables > 0 && `${line.syllables} syl`}
-                </span>
-              </div>
-            ))}
-          </div>
-
+        {/* TEMPORARY: Testing without overlay */}
+        <div style={{ background: 'white', padding: '20px', borderRadius: '10px' }}>
+          <h3>Simplified Editor (no overlay):</h3>
           <textarea
-            ref={textareaRef}
-            className="editor-input"
             value={lyrics}
             onChange={(e) => setLyrics(e.target.value)}
-            placeholder="Start writing your lyrics here...
-Each line will show syllable counts
-Click any word to find rhymes"
-            aria-label="Lyric text editor"
-            autoFocus
+            style={{
+              width: '100%',
+              minHeight: '300px',
+              fontSize: '18px',
+              padding: '20px',
+              direction: 'ltr',
+              textAlign: 'left'
+            }}
             dir="ltr"
-            style={{ direction: 'ltr', textAlign: 'left' }}
+            placeholder="Type here..."
           />
+          <div style={{ marginTop: '10px', color: '#666' }}>
+            What you typed: {lyrics}
+          </div>
         </div>
 
         {selectedWord && (
