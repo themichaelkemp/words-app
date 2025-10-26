@@ -285,9 +285,17 @@ function App() {
 
     // Preserve and restore cursor position after state updates
     useEffect(() => {
+      console.log('🔄 useEffect RUNNING! lyrics changed to:', lyrics)
+      console.log('🔄 minimalRef.current exists?', !!minimalRef.current)
+      console.log('🔄 cursorPositionRef.current:', cursorPositionRef.current)
+
       if (minimalRef.current && cursorPositionRef.current !== null) {
+        console.log('✅ RESTORING cursor to position:', cursorPositionRef.current)
         minimalRef.current.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current)
+        console.log('✅ Cursor restored, now resetting ref')
         cursorPositionRef.current = null
+      } else {
+        console.log('❌ NOT restoring cursor (condition failed)')
       }
     }, [lyrics])
 
