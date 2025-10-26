@@ -384,6 +384,9 @@ body {
   resize: vertical;
   position: relative;
   z-index: 1;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: normal;
 }
 
 .editor-input::placeholder {
