@@ -335,35 +335,18 @@ function App() {
           <p>Char codes: <span id="pure-codes"></span></p>
         </div>
 
-        {/* TEMPORARY: Testing without overlay */}
-        <div style={{ background: 'white', padding: '20px', borderRadius: '10px' }}>
-          <h3>Simplified Editor (no overlay):</h3>
+        {/* COMPLETELY MINIMAL TEST */}
+        <div style={{ background: 'cyan', padding: '20px', borderRadius: '10px' }}>
+          <h3>BARE BONES textarea (NO attributes except value/onChange):</h3>
           <textarea
-            ref={simplifiedRef}
             value={lyrics}
             onChange={(e) => {
-              console.log('🔵 BEFORE setLyrics:', e.target.value)
-              console.log('🔵 Char codes:', [...e.target.value].map(c => c.charCodeAt(0)))
+              console.log('⭐ MINIMAL BEFORE:', e.target.value)
               setLyrics(e.target.value)
-              console.log('🔴 AFTER setLyrics, current lyrics state:', lyrics)
             }}
-            style={{
-              width: '100%',
-              minHeight: '300px',
-              fontSize: '18px',
-              padding: '20px',
-              direction: 'ltr',
-              textAlign: 'left'
-            }}
-            dir="ltr"
-            placeholder="Type here..."
-            autoFocus
           />
-          <div style={{ marginTop: '10px', color: '#666' }}>
-            <p>What you typed: {lyrics}</p>
-            <p>Length: {lyrics.length} characters</p>
-            <p>As array: {JSON.stringify([...lyrics])}</p>
-            <p>Char codes: {[...lyrics].map(c => c.charCodeAt(0)).join(', ')}</p>
+          <div>
+            <p>Lyrics state: {lyrics}</p>
           </div>
         </div>
 
