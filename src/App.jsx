@@ -40,6 +40,9 @@ function App() {
   const [isLoadingRhymes, setIsLoadingRhymes] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
+  // Ref to track pending cursor position across re-renders
+  const pendingCursorPos = useRef(null)
+
   // TEMPORARILY DISABLED - Load saved data from localStorage on mount
   // useEffect(() => {
   //   const savedLyrics = localStorage.getItem('currentLyrics')
@@ -281,10 +284,10 @@ function App() {
     const textareaRef = useRef(null)
     const simplifiedRef = useRef(null)
     const minimalRef = useRef(null)
-    const pendingCursorPos = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
 
     // Callback ref to track when textarea is attached and restore cursor
+    // Uses App-level pendingCursorPos ref to survive re-renders
     const minimalCallbackRef = useCallback((element) => {
       console.log('📌 Callback ref called, element:', !!element, 'pendingCursorPos:', pendingCursorPos.current)
       minimalRef.current = element
@@ -298,7 +301,7 @@ function App() {
       } else if (element) {
         console.log('❌ Not restoring - pendingCursorPos is null')
       }
-    }, [])
+    }, [pendingCursorPos])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
