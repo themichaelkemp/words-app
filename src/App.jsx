@@ -347,6 +347,8 @@ Each line will show syllable counts
 Click any word to find rhymes"
             aria-label="Lyric text editor"
             autoFocus
+            dir="ltr"
+            style={{ direction: 'ltr', textAlign: 'left' }}
           />
         </div>
 
