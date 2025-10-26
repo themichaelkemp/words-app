@@ -43,32 +43,32 @@ function App() {
   // Ref to track pending cursor position across re-renders
   const pendingCursorPos = useRef(null)
 
-  // TEMPORARILY DISABLED - Load saved data from localStorage on mount
-  // useEffect(() => {
-  //   const savedLyrics = localStorage.getItem('currentLyrics')
-  //   const savedSongs = localStorage.getItem('songs')
+  // Load saved data from localStorage on mount
+  useEffect(() => {
+    const savedLyrics = localStorage.getItem('currentLyrics')
+    const savedSongs = localStorage.getItem('songs')
 
-  //   if (savedLyrics) {
-  //     setLyrics(savedLyrics)
-  //   }
-  //   if (savedSongs) {
-  //     try {
-  //       setSongs(JSON.parse(savedSongs))
-  //     } catch (e) {
-  //       console.error('Error loading songs:', e)
-  //     }
-  //   }
-  // }, [])
+    if (savedLyrics) {
+      setLyrics(savedLyrics)
+    }
+    if (savedSongs) {
+      try {
+        setSongs(JSON.parse(savedSongs))
+      } catch (e) {
+        console.error('Error loading songs:', e)
+      }
+    }
+  }, [])
 
-  // TEMPORARILY DISABLED - Auto-save lyrics as user types (with debounce)
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     if (lyrics) {
-  //       localStorage.setItem('currentLyrics', lyrics)
-  //     }
-  //   }, 1000)
-  //   return () => clearTimeout(timer)
-  // }, [lyrics])
+  // Auto-save lyrics as user types (with debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (lyrics) {
+        localStorage.setItem('currentLyrics', lyrics)
+      }
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [lyrics])
 
   // Save songs to localStorage whenever they change
   useEffect(() => {
