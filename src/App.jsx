@@ -306,6 +306,16 @@ function App() {
           </div>
         )}
 
+        {/* DEBUG TEST - Remove this after testing */}
+        <div style={{ background: 'yellow', padding: '20px', margin: '20px 0' }}>
+          <h3>TEST TEXTAREA (should type normally):</h3>
+          <textarea
+            style={{ width: '100%', fontSize: '20px', padding: '10px' }}
+            dir="ltr"
+            placeholder="Type here to test..."
+          />
+        </div>
+
         <div className="lyric-editor" onClick={handleEditorClick}>
           <div className="editor-display">
             {linesWithSyllables.map((line, idx) => (
