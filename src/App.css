@@ -347,50 +347,77 @@ body {
 /* ===========================
    HOME SCREEN - LYRIC EDITOR
    =========================== */
-.lyric-editor {
+.editor-wrapper {
+  display: flex;
+  gap: var(--spacing-lg);
   background: var(--white);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
-  overflow: hidden;
+  padding: var(--spacing-xl);
   min-height: 500px;
-  position: relative;
 }
 
-.editor-display {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: var(--spacing-xl);
-  pointer-events: none;
-  overflow-y: auto;
-  z-index: 2;
-}
-
-.editor-input {
-  width: 100%;
-  height: 100%;
+.lyric-textarea {
+  flex: 1;
   min-height: 500px;
-  padding: var(--spacing-xl);
-  border: none;
+  padding: var(--spacing-md);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
   outline: none;
   font-family: var(--font-mono);
   font-size: 1.125rem;
   line-height: 2;
   color: var(--gray-900);
-  caret-color: var(--gray-900);
-  background: transparent;
+  background: var(--white);
   resize: vertical;
-  position: relative;
-  z-index: 1;
-  direction: ltr;
-  text-align: left;
-  unicode-bidi: normal;
+  transition: border-color 0.2s ease;
 }
 
-.editor-input::placeholder {
+.lyric-textarea:focus {
+  border-color: var(--primary);
+}
+
+.lyric-textarea::placeholder {
   color: var(--gray-400);
+}
+
+.syllable-sidebar {
+  width: 200px;
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.syllable-sidebar h4 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.syllable-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  background: var(--white);
+  border-radius: var(--radius-md);
+}
+
+.line-number {
+  color: var(--gray-500);
+  font-size: 0.875rem;
+}
+
+.syllable-count {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1rem;
 }
 
 .lyric-line {

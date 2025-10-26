@@ -296,13 +296,6 @@ function App() {
       }
     }, [pendingCursorPos])
 
-    const handleEditorClick = (e) => {
-      // Don't focus if clicking on a word (let word click work)
-      if (!e.target.classList.contains('clickable')) {
-        editorRef.current?.focus()
-      }
-    }
-
     const handleLyricChange = (e) => {
       // Save cursor position BEFORE state update
       pendingCursorPos.current = e.target.selectionStart
@@ -330,38 +323,28 @@ function App() {
         )}
 
         {/* Main Lyric Editor */}
-        <div className="editor-container" onClick={handleEditorClick}>
-          <div className="editor-overlay">
-            {linesWithSyllables.map((line, lineIndex) => (
-              <div key={lineIndex} className="editor-line">
-                <span className="syllable-count">{line.totalSyllables}</span>
-                <div className="line-content">
-                  {line.words.map((wordData, wordIndex) => (
-                    <span key={wordIndex}>
-                      <span
-                        className="clickable"
-                        onClick={() => setSelectedWord(wordData.word)}
-                      >
-                        {wordData.word}
-                      </span>
-                      {wordData.space}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-            {lyrics === '' && (
-              <div className="placeholder">Start writing your lyrics here...</div>
-            )}
-          </div>
+        <div className="editor-wrapper">
           <textarea
             ref={editorCallbackRef}
             value={lyrics}
             onChange={handleLyricChange}
-            className="editor-input"
+            className="lyric-textarea"
             placeholder="Start writing your lyrics here..."
             aria-label="Lyric editor"
           />
+
+          {/* Syllable Count Sidebar */}
+          {lyrics && (
+            <div className="syllable-sidebar">
+              <h4>Syllable Count</h4>
+              {linesWithSyllables.map((line, lineIndex) => (
+                <div key={lineIndex} className="syllable-line">
+                  <span className="line-number">{lineIndex + 1}</span>
+                  <span className="syllable-count">{line.totalSyllables}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {selectedWord && (
