@@ -291,8 +291,9 @@ function App() {
     }
 
     const handleMinimalChange = (e) => {
-      // Save cursor position BEFORE state update
+      // Save cursor position and target element BEFORE state update
       const cursorPos = e.target.selectionStart
+      const textareaElement = e.target
       console.log('⭐ MINIMAL BEFORE:', e.target.value)
       console.log('⭐ Cursor at position:', cursorPos)
 
@@ -301,15 +302,10 @@ function App() {
         setLyrics(e.target.value)
       })
 
-      // Restore cursor position immediately after synchronous update
+      // Restore cursor position immediately after synchronous update using e.target
       console.log('🎯 IMMEDIATELY restoring cursor to:', cursorPos)
-      console.log('🎯 minimalRef.current exists?', !!minimalRef.current)
-      if (minimalRef.current) {
-        minimalRef.current.setSelectionRange(cursorPos, cursorPos)
-        console.log('✅ Cursor restored to position:', minimalRef.current.selectionStart)
-      } else {
-        console.log('❌ ERROR: minimalRef.current is null!')
-      }
+      textareaElement.setSelectionRange(cursorPos, cursorPos)
+      console.log('✅ Cursor restored to position:', textareaElement.selectionStart)
     }
 
     return (
