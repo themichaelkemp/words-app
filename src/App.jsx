@@ -348,7 +348,10 @@ function App() {
             autoFocus
           />
           <div style={{ marginTop: '10px', color: '#666' }}>
-            What you typed: {lyrics}
+            <p>What you typed: {lyrics}</p>
+            <p>Length: {lyrics.length} characters</p>
+            <p>As array: {JSON.stringify([...lyrics])}</p>
+            <p>Char codes: {[...lyrics].map(c => c.charCodeAt(0)).join(', ')}</p>
           </div>
         </div>
 
