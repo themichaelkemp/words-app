@@ -286,14 +286,17 @@ function App() {
 
     // Callback ref to track when textarea is attached and restore cursor
     const minimalCallbackRef = useCallback((element) => {
-      console.log('📌 Callback ref called, element:', !!element)
+      console.log('📌 Callback ref called, element:', !!element, 'pendingCursorPos:', pendingCursorPos.current)
       minimalRef.current = element
 
       if (element && pendingCursorPos.current !== null) {
         console.log('✅ Restoring pending cursor position:', pendingCursorPos.current)
         element.setSelectionRange(pendingCursorPos.current, pendingCursorPos.current)
         element.focus()
+        console.log('✅ Cursor restored, focused?', document.activeElement === element)
         pendingCursorPos.current = null
+      } else if (element) {
+        console.log('❌ Not restoring - pendingCursorPos is null')
       }
     }, [])
 
