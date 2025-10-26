@@ -39,32 +39,32 @@ function App() {
   const [isLoadingRhymes, setIsLoadingRhymes] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
-  // Load saved data from localStorage on mount
-  useEffect(() => {
-    const savedLyrics = localStorage.getItem('currentLyrics')
-    const savedSongs = localStorage.getItem('songs')
+  // TEMPORARILY DISABLED - Load saved data from localStorage on mount
+  // useEffect(() => {
+  //   const savedLyrics = localStorage.getItem('currentLyrics')
+  //   const savedSongs = localStorage.getItem('songs')
 
-    if (savedLyrics) {
-      setLyrics(savedLyrics)
-    }
-    if (savedSongs) {
-      try {
-        setSongs(JSON.parse(savedSongs))
-      } catch (e) {
-        console.error('Error loading songs:', e)
-      }
-    }
-  }, [])
+  //   if (savedLyrics) {
+  //     setLyrics(savedLyrics)
+  //   }
+  //   if (savedSongs) {
+  //     try {
+  //       setSongs(JSON.parse(savedSongs))
+  //     } catch (e) {
+  //       console.error('Error loading songs:', e)
+  //     }
+  //   }
+  // }, [])
 
-  // Auto-save lyrics as user types (with debounce)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (lyrics) {
-        localStorage.setItem('currentLyrics', lyrics)
-      }
-    }, 1000)
-    return () => clearTimeout(timer)
-  }, [lyrics])
+  // TEMPORARILY DISABLED - Auto-save lyrics as user types (with debounce)
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     if (lyrics) {
+  //       localStorage.setItem('currentLyrics', lyrics)
+  //     }
+  //   }, 1000)
+  //   return () => clearTimeout(timer)
+  // }, [lyrics])
 
   // Save songs to localStorage whenever they change
   useEffect(() => {
@@ -281,16 +281,16 @@ function App() {
     const simplifiedRef = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
 
-    // Keep textarea focused as user types
-    useEffect(() => {
-      if (simplifiedRef.current && document.activeElement !== simplifiedRef.current) {
-        // Only refocus if user was typing (not clicking elsewhere)
-        const shouldFocus = lyrics.length > 0
-        if (shouldFocus) {
-          simplifiedRef.current.focus()
-        }
-      }
-    }, [lyrics])
+    // TEMPORARILY DISABLED - Keep textarea focused as user types
+    // useEffect(() => {
+    //   if (simplifiedRef.current && document.activeElement !== simplifiedRef.current) {
+    //     // Only refocus if user was typing (not clicking elsewhere)
+    //     const shouldFocus = lyrics.length > 0
+    //     if (shouldFocus) {
+    //       simplifiedRef.current.focus()
+    //     }
+    //   }
+    // }, [lyrics])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
