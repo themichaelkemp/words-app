@@ -291,9 +291,8 @@ function App() {
     }
 
     const handleMinimalChange = (e) => {
-      // Save cursor position and target element BEFORE state update
+      // Save cursor position BEFORE state update
       const cursorPos = e.target.selectionStart
-      const textareaElement = e.target
       console.log('⭐ MINIMAL BEFORE:', e.target.value)
       console.log('⭐ Cursor at position:', cursorPos)
 
@@ -303,17 +302,18 @@ function App() {
       })
 
       // Use requestAnimationFrame to restore cursor and focus after browser paint
+      // IMPORTANT: Use minimalRef.current (the NEW textarea) not e.target (the OLD removed textarea)
       requestAnimationFrame(() => {
         console.log('🎯 requestAnimationFrame: restoring cursor to:', cursorPos)
-        console.log('🎯 textareaElement still in DOM?', document.body.contains(textareaElement))
-        console.log('🎯 textareaElement === minimalRef.current?', textareaElement === minimalRef.current)
+        console.log('🎯 minimalRef.current exists?', !!minimalRef.current)
 
-        textareaElement.setSelectionRange(cursorPos, cursorPos)
-        textareaElement.focus()
+        if (minimalRef.current) {
+          minimalRef.current.setSelectionRange(cursorPos, cursorPos)
+          minimalRef.current.focus()
 
-        console.log('✅ Cursor restored to position:', textareaElement.selectionStart)
-        console.log('✅ Textarea focused?', document.activeElement === textareaElement)
-        console.log('❓ What HAS focus?', document.activeElement.tagName, document.activeElement.className)
+          console.log('✅ Cursor restored to position:', minimalRef.current.selectionStart)
+          console.log('✅ Textarea focused?', document.activeElement === minimalRef.current)
+        }
       })
     }
 
