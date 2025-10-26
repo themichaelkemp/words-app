@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo } from 'react'
 import { flushSync } from 'react-dom'
 import './App.css'
 
@@ -40,8 +40,9 @@ function App() {
   const [isLoadingRhymes, setIsLoadingRhymes] = useState(false)
   const [saveMessage, setSaveMessage] = useState('')
 
-  // Ref to track pending cursor position across re-renders
+  // Refs to track pending cursor positions across re-renders
   const pendingCursorPos = useRef(null)
+  const pendingRhymeCursorPos = useRef(null)
 
   // Load saved data from localStorage on mount
   useEffect(() => {
@@ -109,9 +110,27 @@ function App() {
   const getLinesWithSyllables = (text) => {
     const lines = text.split('\n')
     return lines.map(line => {
-      const words = line.split(' ').filter(w => w)
-      const syllables = words.reduce((sum, word) => sum + countSyllables(word), 0)
-      return { text: line, syllables, words }
+      const wordParts = line.split(/(\s+)/)
+      const words = []
+      let totalSyllables = 0
+
+      for (let i = 0; i < wordParts.length; i++) {
+        const part = wordParts[i]
+        if (part && !/^\s+$/.test(part)) {
+          const syllables = countSyllables(part)
+          totalSyllables += syllables
+          words.push({
+            word: part,
+            syllables: syllables,
+            space: i < wordParts.length - 1 && /^\s+$/.test(wordParts[i + 1]) ? wordParts[i + 1] : ''
+          })
+          if (i < wordParts.length - 1 && /^\s+$/.test(wordParts[i + 1])) {
+            i++ // Skip the space we just added
+          }
+        }
+      }
+
+      return { totalSyllables, words }
     })
   }
 
@@ -282,25 +301,39 @@ function App() {
   // Home Screen - Lyric Writing Interface
   const HomeScreen = () => {
     const editorRef = useRef(null)
-    const linesWithSyllables = getLinesWithSyllables(lyrics)
+    const rhymeInputRef = useRef(null)
 
-    // Callback ref to track when textarea is attached and restore cursor
-    // Uses App-level pendingCursorPos ref to survive re-renders
+    // Memoize syllable calculation to prevent re-calculation on every keystroke
+    const linesWithSyllables = useMemo(() => getLinesWithSyllables(lyrics), [lyrics])
+
+    // Callback ref for main editor textarea
     const editorCallbackRef = useCallback((element) => {
       editorRef.current = element
-
       if (element && pendingCursorPos.current !== null) {
         element.setSelectionRange(pendingCursorPos.current, pendingCursorPos.current)
         element.focus()
         pendingCursorPos.current = null
       }
-    }, [pendingCursorPos])
+    }, [])
+
+    // Callback ref for rhyme input
+    const rhymeInputCallbackRef = useCallback((element) => {
+      rhymeInputRef.current = element
+      if (element && pendingRhymeCursorPos.current !== null) {
+        element.setSelectionRange(pendingRhymeCursorPos.current, pendingRhymeCursorPos.current)
+        element.focus()
+        pendingRhymeCursorPos.current = null
+      }
+    }, [])
 
     const handleLyricChange = (e) => {
-      // Save cursor position BEFORE state update
       pendingCursorPos.current = e.target.selectionStart
-      // Update lyrics state
       setLyrics(e.target.value)
+    }
+
+    const handleRhymeInputChange = (e) => {
+      pendingRhymeCursorPos.current = e.target.selectionStart
+      setSearchQuery(e.target.value)
     }
 
     return (
@@ -352,10 +385,11 @@ function App() {
           <h3>Quick Rhyme Finder</h3>
           <div className="rhyme-input-group">
             <input
+              ref={rhymeInputCallbackRef}
               type="text"
               placeholder="Enter a word to find rhymes..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleRhymeInputChange}
               onKeyPress={(e) => {
                 if (e.key === 'Enter' && searchQuery.trim()) {
                   setSelectedWord(searchQuery.trim())
