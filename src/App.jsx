@@ -279,24 +279,31 @@ function App() {
   const HomeScreen = () => {
     const textareaRef = useRef(null)
     const simplifiedRef = useRef(null)
+    const minimalRef = useRef(null)
+    const cursorPositionRef = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
 
-    // TEMPORARILY DISABLED - Keep textarea focused as user types
-    // useEffect(() => {
-    //   if (simplifiedRef.current && document.activeElement !== simplifiedRef.current) {
-    //     // Only refocus if user was typing (not clicking elsewhere)
-    //     const shouldFocus = lyrics.length > 0
-    //     if (shouldFocus) {
-    //       simplifiedRef.current.focus()
-    //     }
-    //   }
-    // }, [lyrics])
+    // Preserve and restore cursor position after state updates
+    useEffect(() => {
+      if (minimalRef.current && cursorPositionRef.current !== null) {
+        minimalRef.current.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current)
+        cursorPositionRef.current = null
+      }
+    }, [lyrics])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
       if (!e.target.classList.contains('clickable')) {
         textareaRef.current?.focus()
       }
+    }
+
+    const handleMinimalChange = (e) => {
+      // Save cursor position BEFORE state update
+      cursorPositionRef.current = e.target.selectionStart
+      console.log('⭐ MINIMAL BEFORE:', e.target.value)
+      console.log('⭐ Cursor at position:', cursorPositionRef.current)
+      setLyrics(e.target.value)
     }
 
     return (
@@ -337,16 +344,16 @@ function App() {
 
         {/* COMPLETELY MINIMAL TEST */}
         <div style={{ background: 'cyan', padding: '20px', borderRadius: '10px' }}>
-          <h3>BARE BONES textarea (NO attributes except value/onChange):</h3>
+          <h3>BARE BONES textarea WITH cursor fix:</h3>
           <textarea
+            ref={minimalRef}
             value={lyrics}
-            onChange={(e) => {
-              console.log('⭐ MINIMAL BEFORE:', e.target.value)
-              setLyrics(e.target.value)
-            }}
+            onChange={handleMinimalChange}
+            style={{ width: '100%', minHeight: '200px', fontSize: '16px', padding: '10px' }}
           />
           <div>
             <p>Lyrics state: {lyrics}</p>
+            <p>Length: {lyrics.length}</p>
           </div>
         </div>
 
