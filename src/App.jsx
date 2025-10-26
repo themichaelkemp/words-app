@@ -281,7 +281,21 @@ function App() {
     const textareaRef = useRef(null)
     const simplifiedRef = useRef(null)
     const minimalRef = useRef(null)
+    const pendingCursorPos = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
+
+    // Callback ref to track when textarea is attached and restore cursor
+    const minimalCallbackRef = useCallback((element) => {
+      console.log('📌 Callback ref called, element:', !!element)
+      minimalRef.current = element
+
+      if (element && pendingCursorPos.current !== null) {
+        console.log('✅ Restoring pending cursor position:', pendingCursorPos.current)
+        element.setSelectionRange(pendingCursorPos.current, pendingCursorPos.current)
+        element.focus()
+        pendingCursorPos.current = null
+      }
+    }, [])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
@@ -292,29 +306,12 @@ function App() {
 
     const handleMinimalChange = (e) => {
       // Save cursor position BEFORE state update
-      const cursorPos = e.target.selectionStart
+      pendingCursorPos.current = e.target.selectionStart
       console.log('⭐ MINIMAL BEFORE:', e.target.value)
-      console.log('⭐ Cursor at position:', cursorPos)
+      console.log('⭐ Cursor at position:', pendingCursorPos.current)
 
-      // Use flushSync to force synchronous state update
-      flushSync(() => {
-        setLyrics(e.target.value)
-      })
-
-      // Use requestAnimationFrame to restore cursor and focus after browser paint
-      // IMPORTANT: Use minimalRef.current (the NEW textarea) not e.target (the OLD removed textarea)
-      requestAnimationFrame(() => {
-        console.log('🎯 requestAnimationFrame: restoring cursor to:', cursorPos)
-        console.log('🎯 minimalRef.current exists?', !!minimalRef.current)
-
-        if (minimalRef.current) {
-          minimalRef.current.setSelectionRange(cursorPos, cursorPos)
-          minimalRef.current.focus()
-
-          console.log('✅ Cursor restored to position:', minimalRef.current.selectionStart)
-          console.log('✅ Textarea focused?', document.activeElement === minimalRef.current)
-        }
-      })
+      // Update state normally (no flushSync)
+      setLyrics(e.target.value)
     }
 
     return (
@@ -357,7 +354,7 @@ function App() {
         <div style={{ background: 'cyan', padding: '20px', borderRadius: '10px' }}>
           <h3>BARE BONES textarea WITH cursor fix:</h3>
           <textarea
-            ref={minimalRef}
+            ref={minimalCallbackRef}
             value={lyrics}
             onChange={handleMinimalChange}
             style={{ width: '100%', minHeight: '200px', fontSize: '16px', padding: '10px' }}
