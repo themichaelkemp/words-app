@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import { flushSync } from 'react-dom'
 import './App.css'
 
 // Import icons (using Unicode symbols for now)
@@ -280,25 +281,7 @@ function App() {
     const textareaRef = useRef(null)
     const simplifiedRef = useRef(null)
     const minimalRef = useRef(null)
-    const cursorPositionRef = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
-
-    // Preserve and restore cursor position after state updates
-    // Using useLayoutEffect to run synchronously after DOM updates
-    useLayoutEffect(() => {
-      console.log('🔄 useLayoutEffect RUNNING! lyrics changed to:', lyrics)
-      console.log('🔄 minimalRef.current exists?', !!minimalRef.current)
-      console.log('🔄 cursorPositionRef.current:', cursorPositionRef.current)
-
-      if (minimalRef.current && cursorPositionRef.current !== null) {
-        console.log('✅ RESTORING cursor to position:', cursorPositionRef.current)
-        minimalRef.current.setSelectionRange(cursorPositionRef.current, cursorPositionRef.current)
-        console.log('✅ Cursor restored, now resetting ref')
-        cursorPositionRef.current = null
-      } else {
-        console.log('❌ NOT restoring cursor (condition failed)')
-      }
-    }, [lyrics])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
@@ -309,10 +292,21 @@ function App() {
 
     const handleMinimalChange = (e) => {
       // Save cursor position BEFORE state update
-      cursorPositionRef.current = e.target.selectionStart
+      const cursorPos = e.target.selectionStart
       console.log('⭐ MINIMAL BEFORE:', e.target.value)
-      console.log('⭐ Cursor at position:', cursorPositionRef.current)
-      setLyrics(e.target.value)
+      console.log('⭐ Cursor at position:', cursorPos)
+
+      // Use flushSync to force synchronous state update
+      flushSync(() => {
+        setLyrics(e.target.value)
+      })
+
+      // Restore cursor position immediately after synchronous update
+      console.log('🎯 IMMEDIATELY restoring cursor to:', cursorPos)
+      if (minimalRef.current) {
+        minimalRef.current.setSelectionRange(cursorPos, cursorPos)
+        console.log('✅ Cursor restored!')
+      }
     }
 
     return (
