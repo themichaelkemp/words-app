@@ -341,7 +341,12 @@ function App() {
           <textarea
             ref={simplifiedRef}
             value={lyrics}
-            onChange={(e) => setLyrics(e.target.value)}
+            onChange={(e) => {
+              console.log('🔵 BEFORE setLyrics:', e.target.value)
+              console.log('🔵 Char codes:', [...e.target.value].map(c => c.charCodeAt(0)))
+              setLyrics(e.target.value)
+              console.log('🔴 AFTER setLyrics, current lyrics state:', lyrics)
+            }}
             style={{
               width: '100%',
               minHeight: '300px',
