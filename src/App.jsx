@@ -278,7 +278,19 @@ function App() {
   // Home Screen - Lyric Writing Interface
   const HomeScreen = () => {
     const textareaRef = useRef(null)
+    const simplifiedRef = useRef(null)
     const linesWithSyllables = getLinesWithSyllables(lyrics)
+
+    // Keep textarea focused as user types
+    useEffect(() => {
+      if (simplifiedRef.current && document.activeElement !== simplifiedRef.current) {
+        // Only refocus if user was typing (not clicking elsewhere)
+        const shouldFocus = lyrics.length > 0
+        if (shouldFocus) {
+          simplifiedRef.current.focus()
+        }
+      }
+    }, [lyrics])
 
     const handleEditorClick = (e) => {
       // Don't focus if clicking on a word (let word click work)
@@ -320,6 +332,7 @@ function App() {
         <div style={{ background: 'white', padding: '20px', borderRadius: '10px' }}>
           <h3>Simplified Editor (no overlay):</h3>
           <textarea
+            ref={simplifiedRef}
             value={lyrics}
             onChange={(e) => setLyrics(e.target.value)}
             style={{
@@ -332,6 +345,7 @@ function App() {
             }}
             dir="ltr"
             placeholder="Type here..."
+            autoFocus
           />
           <div style={{ marginTop: '10px', color: '#666' }}>
             What you typed: {lyrics}
