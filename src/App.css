@@ -420,6 +420,40 @@ body {
   font-size: 1rem;
 }
 
+.quick-rhyme-lookup {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-rhyme-lookup h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--gray-900);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.rhyme-input-group {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.rhyme-input {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.rhyme-input:focus {
+  border-color: var(--primary);
+}
+
 .lyric-line {
   display: flex;
   align-items: center;

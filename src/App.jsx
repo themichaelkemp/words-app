@@ -347,17 +347,37 @@ function App() {
           )}
         </div>
 
-        {selectedWord && (
-          <div className="quick-info">
-            Selected word: <strong>{selectedWord}</strong> -
+        {/* Quick Rhyme Lookup */}
+        <div className="quick-rhyme-lookup">
+          <h3>Quick Rhyme Finder</h3>
+          <div className="rhyme-input-group">
+            <input
+              type="text"
+              placeholder="Enter a word to find rhymes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim()) {
+                  setSelectedWord(searchQuery.trim())
+                  setCurrentScreen('dictionary')
+                }
+              }}
+              className="rhyme-input"
+            />
             <button
-              className="link-btn"
-              onClick={() => setCurrentScreen('dictionary')}
+              className="btn-primary"
+              onClick={() => {
+                if (searchQuery.trim()) {
+                  setSelectedWord(searchQuery.trim())
+                  setCurrentScreen('dictionary')
+                }
+              }}
+              disabled={!searchQuery.trim()}
             >
-              Find rhymes
+              Find Rhymes
             </button>
           </div>
-        )}
+        </div>
       </div>
     )
   }
