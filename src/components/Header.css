@@ -53,3 +53,20 @@
   background-color: #f0f0f0;
   color: #333;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 0.875rem 1rem;
+    padding-left: 4rem; /* Make room for hamburger menu */
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .icon-button {
+    width: 40px;
+    height: 40px;
+  }
+}

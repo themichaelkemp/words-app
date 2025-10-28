@@ -375,3 +375,70 @@
   font-style: italic;
   font-weight: 500;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .forms-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .forms-header h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .form-actions {
+    justify-content: center;
+  }
+
+  .forms-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    padding: 1.25rem;
+  }
+
+  .form-editor {
+    padding: 1rem;
+  }
+
+  .form-editor-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .form-header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .section-textarea {
+    font-size: 0.95rem;
+  }
+
+  .import-song-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .saved-form-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .saved-form-actions {
+    justify-content: stretch;
+    flex-direction: column;
+  }
+
+  .action-button-small {
+    width: 100%;
+    justify-content: center;
+  }
+}

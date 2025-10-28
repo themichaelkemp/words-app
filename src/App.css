@@ -17,3 +17,14 @@
   background-color: #f5f5f5;
   padding: 2rem;
 }
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .app-body {
+    position: relative;
+  }
+}

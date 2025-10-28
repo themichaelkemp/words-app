@@ -242,6 +242,110 @@
   color: #f5576c;
 }
 
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .schemes-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .schemes-header h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .scheme-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .schemes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scheme-card {
+    padding: 1.25rem;
+  }
+
+  .scheme-editor {
+    padding: 1rem;
+  }
+
+  .scheme-editor-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .scheme-editor-title h3 {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .form-header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .scheme-line {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  .rhyme-letter {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    margin: 0;
+    align-self: flex-start;
+  }
+
+  .line-input {
+    font-size: 0.95rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .rhyme-hint {
+    font-size: 0.8rem;
+  }
+
+  .import-song-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .saved-scheme-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .saved-scheme-actions {
+    flex-direction: column;
+  }
+
+  .action-button-small {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .rhyme-preview {
+    padding: 0.5rem;
+  }
+
+  .rhyme-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
 .title-input-section {
   margin-bottom: 1.5rem;
 }

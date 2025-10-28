@@ -281,3 +281,56 @@
   color: #666;
   font-size: 1.1rem;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .dictionary-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .search-box {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .search-input,
+  .search-button {
+    font-size: 1rem;
+    padding: 0.875rem 1.25rem;
+  }
+
+  .rhyme-tabs {
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .tab-emoji {
+    font-size: 1rem;
+  }
+
+  .tab-count {
+    font-size: 0.75rem;
+  }
+
+  .words-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .word-item {
+    font-size: 1rem;
+  }
+
+  .definition-text {
+    font-size: 0.8rem;
+  }
+
+  .rhyme-results {
+    padding: 1rem;
+  }
+}

@@ -145,3 +145,57 @@
 .songs-list .song-card {
   flex-direction: row;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .songbook-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .songbook-header h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .view-toggle {
+    justify-content: center;
+  }
+
+  .songs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .song-card {
+    padding: 1.25rem;
+    flex-direction: column !important;
+  }
+
+  .song-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .song-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .song-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+  }
+
+  .empty-state {
+    padding: 3rem 1.5rem;
+    font-size: 1rem;
+  }
+}
