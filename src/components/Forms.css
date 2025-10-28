@@ -1,0 +1,377 @@
+.forms-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.forms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.forms-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.import-btn {
+  background: #56ab2f;
+  color: white;
+}
+
+.import-btn:hover {
+  background: #4a9428;
+  transform: translateY(-2px);
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.forms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.form-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.form-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.form-description {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.form-structure-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.structure-item {
+  background: #f0f0f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.form-editor {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.form-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.form-editor-header h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #666;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+}
+
+.form-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.section-label {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 1rem;
+}
+
+.section-textarea {
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.section-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.title-input-section {
+  margin-bottom: 1.5rem;
+}
+
+.song-title-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.song-title-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.editor-hint {
+  color: #667eea;
+  font-size: 0.95rem;
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+.load-btn {
+  background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+  color: white;
+}
+
+.load-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(86, 171, 47, 0.4);
+}
+
+.saved-forms-view {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.saved-forms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.saved-forms-header h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.saved-forms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.saved-form-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.saved-form-card:hover {
+  background: #f0f0f0;
+}
+
+.saved-form-info h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.saved-form-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.saved-form-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-button-small {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button-small.load-btn {
+  background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+  color: white;
+}
+
+.action-button-small.delete-btn {
+  background: #f5f5f5;
+  color: #e74c3c;
+}
+
+.action-button-small:hover {
+  transform: translateY(-2px);
+}
+
+.empty-saved {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+}
+
+.form-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.import-view {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.import-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.import-header h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.import-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.import-song-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.import-song-card:hover {
+  background: #f0f0f0;
+}
+
+.import-song-info h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.import-song-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.import-instructions {
+  background: #f0f7ff;
+  border-left: 4px solid #667eea;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+}
+
+.import-instructions p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+}
+
+.detected-structure {
+  color: #667eea;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+  font-weight: 500;
+}

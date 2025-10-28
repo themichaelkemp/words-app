@@ -1,0 +1,20 @@
+.placeholder-view {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.placeholder-view h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.placeholder-view p {
+  font-size: 1.1rem;
+  color: #666;
+}

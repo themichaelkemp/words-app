@@ -1,0 +1,158 @@
+.editor-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.editor-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.save-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.save-button.saved {
+  background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+}
+
+.cancel-button {
+  padding: 0.75rem 1.5rem;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-button:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.editor-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.title-section {
+  margin-bottom: 1.5rem;
+}
+
+.title-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.title-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.title-input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+.editor-hint {
+  color: #667eea;
+  font-size: 0.95rem;
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+.editor-workspace {
+  margin-top: 1.5rem;
+}
+
+.editor-input-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.lyrics-textarea {
+  flex: 1;
+  min-height: 500px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.8;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  resize: none;
+  transition: border-color 0.2s;
+}
+
+.lyrics-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.syllable-display-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 1rem;
+  min-width: 45px;
+}
+
+.syllable-line {
+  height: calc(1.1rem * 1.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  margin-bottom: 0.1rem;
+  min-height: 28px;
+}
+
+.syllable-line:empty {
+  background: transparent;
+}
