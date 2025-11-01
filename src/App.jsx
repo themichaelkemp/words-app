@@ -1,39 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, Suspense, lazy } from 'react'
+import { useLocalStorage } from './hooks/useLocalStorage'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Editor from './components/Editor'
-import Songbook from './components/Songbook'
-import Forms from './components/Forms'
-import Schemes from './components/Schemes'
-import Dictionary from './components/Dictionary'
 import './App.css'
+
+// Lazy load heavy components for better performance
+const Songbook = lazy(() => import('./components/Songbook'))
+const Forms = lazy(() => import('./components/Forms'))
+const Schemes = lazy(() => import('./components/Schemes'))
+const Dictionary = lazy(() => import('./components/Dictionary'))
 
 function App() {
   const [currentView, setCurrentView] = useState('write')
   const [searchWord, setSearchWord] = useState('')
-  const [songs, setSongs] = useState([])
+  const [songs, setSongs] = useLocalStorage('wordsMatterSongs', [])
   const [editingSong, setEditingSong] = useState(null)
-  const [currentDraft, setCurrentDraft] = useState({ title: '', lyrics: '' })
-
-  // Load songs and draft from localStorage on mount
-  useEffect(() => {
-    const savedSongs = localStorage.getItem('wordsMatterSongs')
-    if (savedSongs) {
-      setSongs(JSON.parse(savedSongs))
-    }
-
-    const savedDraft = localStorage.getItem('wordsMatterCurrentDraft')
-    if (savedDraft) {
-      setCurrentDraft(JSON.parse(savedDraft))
-    }
-  }, [])
-
-  // Save songs to localStorage whenever they change
-  useEffect(() => {
-    if (songs.length > 0) {
-      localStorage.setItem('wordsMatterSongs', JSON.stringify(songs))
-    }
-  }, [songs])
+  const [currentDraft, setCurrentDraft] = useLocalStorage('wordsMatterCurrentDraft', {
+    title: '',
+    lyrics: ''
+  })
 
   const handleWordClick = (word) => {
     // Clean up the word and navigate to dictionary
@@ -45,7 +31,6 @@ function App() {
 
   const handleDraftChange = (draft) => {
     setCurrentDraft(draft)
-    localStorage.setItem('wordsMatterCurrentDraft', JSON.stringify(draft))
   }
 
   const handleSaveSong = (songData) => {
@@ -65,7 +50,6 @@ function App() {
       setSongs([newSong, ...songs])
       // Clear the draft after saving
       setCurrentDraft({ title: '', lyrics: '' })
-      localStorage.removeItem('wordsMatterCurrentDraft')
     }
   }
 
@@ -116,7 +100,9 @@ function App() {
       <div className="app-body">
         <Sidebar currentView={currentView} onViewChange={setCurrentView} />
         <main className="main-content">
-          {renderView()}
+          <Suspense fallback={<div className="loading-fallback">Loading...</div>}>
+            {renderView()}
+          </Suspense>
         </main>
       </div>
     </div>
