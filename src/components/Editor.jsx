@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut'
 import './Editor.css'
 
 // Simple syllable counter function
@@ -104,6 +105,9 @@ function Editor({ onWordClick, onSave, editingSong, onCancelEdit, currentDraft, 
       onWordClick(word)
     }
   }
+
+  // Keyboard shortcuts: Ctrl+S to save
+  useKeyboardShortcut('s', handleSave, { ctrl: true })
 
   const handleDoubleClick = (e) => {
     // Get the word at the cursor position when double-clicked
