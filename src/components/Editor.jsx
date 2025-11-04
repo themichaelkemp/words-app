@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut'
+import { sanitizeLyrics, sanitizeSongTitle } from '../utils/sanitize'
 import './Editor.css'
 
 // Simple syllable counter function
@@ -62,13 +63,22 @@ function Editor({ onWordClick, onSave, editingSong, onCancelEdit, currentDraft, 
       return
     }
 
-    const lines = lyrics.split('\n').filter(line => line.trim().length > 0)
-    const words = lyrics.split(/\s+/).filter(w => w.trim().length > 0)
+    // Sanitize inputs before saving
+    const sanitizedTitle = sanitizeSongTitle(title) || 'Untitled'
+    const sanitizedLyrics = sanitizeLyrics(lyrics)
+
+    if (!sanitizedLyrics.trim()) {
+      alert('Invalid lyrics content!')
+      return
+    }
+
+    const lines = sanitizedLyrics.split('\n').filter(line => line.trim().length > 0)
+    const words = sanitizedLyrics.split(/\s+/).filter(w => w.trim().length > 0)
     const totalSyllables = words.reduce((sum, word) => sum + countSyllables(word), 0)
 
     const songData = {
-      title: title.trim() || 'Untitled',
-      lyrics: lyrics,
+      title: sanitizedTitle,
+      lyrics: sanitizedLyrics,
       lines: lines.length,
       syllables: totalSyllables
     }
