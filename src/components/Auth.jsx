@@ -4,22 +4,24 @@ import { sanitizeDisplayName, isValidEmail } from '../utils/sanitize'
 import './Auth.css'
 
 function Auth({ isOpen, onClose, initialMode = 'login' }) {
-  const [mode, setMode] = useState(initialMode) // 'login' or 'signup'
+  const [mode, setMode] = useState(initialMode) // 'login', 'signup', or 'reset'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { login, signup, signInWithGoogle } = useAuth()
+  const { login, signup, signInWithGoogle, resetPassword } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
 
     // Validation
-    if (!email || !password) {
+    if (!email || (!password && mode !== 'reset')) {
       setError('Please fill in all fields')
       return
     }
@@ -56,20 +58,29 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
     setLoading(true)
 
     try {
-      if (mode === 'login') {
+      if (mode === 'reset') {
+        await resetPassword(email.trim())
+        setSuccess('Password reset email sent! Check your inbox.')
+        setEmail('')
+        // Don't close modal so user can see success message
+      } else if (mode === 'login') {
         await login(email.trim(), password)
+        // Clear form
+        setEmail('')
+        setPassword('')
+        onClose()
       } else {
         const sanitizedName = sanitizeDisplayName(displayName)
         await signup(email.trim(), password, sanitizedName)
+        // Clear form
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+        setDisplayName('')
+        onClose()
       }
-      // Clear form
-      setEmail('')
-      setPassword('')
-      setConfirmPassword('')
-      setDisplayName('')
-      onClose()
     } catch (err) {
-      setError(err.message || 'Authentication failed')
+      setError(err.message || 'Operation failed')
     } finally {
       setLoading(false)
     }
@@ -90,8 +101,13 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
   }
 
   const toggleMode = () => {
-    setMode(mode === 'login' ? 'signup' : 'login')
+    if (mode === 'reset') {
+      setMode('login')
+    } else {
+      setMode(mode === 'login' ? 'signup' : 'login')
+    }
     setError('')
+    setSuccess('')
   }
 
   if (!isOpen) return null
@@ -102,9 +118,14 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
         <button className="auth-close-button" onClick={onClose}>✕</button>
 
         <div className="auth-header">
-          <h2>{mode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
+          <h2>
+            {mode === 'reset' ? 'Reset Password' :
+             mode === 'login' ? 'Welcome Back' : 'Create Account'}
+          </h2>
           <p className="auth-subtitle">
-            {mode === 'login'
+            {mode === 'reset'
+              ? 'Enter your email to receive a reset link'
+              : mode === 'login'
               ? 'Sign in to access your songs'
               : 'Start writing your lyrics today'}
           </p>
@@ -113,6 +134,12 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
         {error && (
           <div className="auth-error">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="auth-success">
+            {success}
           </div>
         )}
 
@@ -145,18 +172,32 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
             />
           </div>
 
-          <div className="auth-field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              disabled={loading}
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            />
-          </div>
+          {mode !== 'reset' && (
+            <div className="auth-field">
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                disabled={loading}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              />
+            </div>
+          )}
+
+          {mode === 'login' && (
+            <div className="forgot-password-link">
+              <button
+                type="button"
+                onClick={() => setMode('reset')}
+                className="forgot-password-btn"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
 
           {mode === 'signup' && (
             <div className="auth-field">
@@ -178,7 +219,9 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
             className="auth-submit-btn"
             disabled={loading}
           >
-            {loading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Sign Up')}
+            {loading ? 'Please wait...' :
+             mode === 'reset' ? 'Send Reset Link' :
+             mode === 'login' ? 'Sign In' : 'Sign Up'}
           </button>
         </form>
 
@@ -204,7 +247,14 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
         */}
 
         <div className="auth-toggle">
-          {mode === 'login' ? (
+          {mode === 'reset' ? (
+            <p>
+              Remember your password?{' '}
+              <button onClick={toggleMode} className="auth-toggle-btn">
+                Back to sign in
+              </button>
+            </p>
+          ) : mode === 'login' ? (
             <p>
               Don't have an account?{' '}
               <button onClick={toggleMode} className="auth-toggle-btn">

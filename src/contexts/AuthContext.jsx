@@ -6,7 +6,8 @@ import {
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  sendPasswordResetEmail
 } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { auth, db } from '../firebase'
@@ -129,6 +130,17 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Reset password
+  const resetPassword = async (email) => {
+    try {
+      setError(null)
+      await sendPasswordResetEmail(auth, email)
+    } catch (err) {
+      setError(err.message)
+      throw err
+    }
+  }
+
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -164,6 +176,7 @@ export function AuthProvider({ children }) {
     logout,
     signInWithGoogle,
     updateUserProfile,
+    resetPassword,
     isAuthenticated: !!currentUser
   }
 
