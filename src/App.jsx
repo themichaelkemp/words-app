@@ -1,5 +1,7 @@
-import { useState, Suspense, lazy } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { useAuth } from './contexts/AuthContext'
+import { getUserSongs, createSong, updateSong, deleteSong } from './services/songsService'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Editor from './components/Editor'
@@ -12,14 +14,38 @@ const Schemes = lazy(() => import('./components/Schemes'))
 const Dictionary = lazy(() => import('./components/Dictionary'))
 
 function App() {
+  const { currentUser } = useAuth()
   const [currentView, setCurrentView] = useState('write')
   const [searchWord, setSearchWord] = useState('')
-  const [songs, setSongs] = useLocalStorage('wordsMatterSongs', [])
+  const [songs, setSongs] = useState([])
+  const [loading, setLoading] = useState(false)
   const [editingSong, setEditingSong] = useState(null)
   const [currentDraft, setCurrentDraft] = useLocalStorage('wordsMatterCurrentDraft', {
     title: '',
     lyrics: ''
   })
+
+  // Load songs from Firestore when user logs in
+  useEffect(() => {
+    const loadSongs = async () => {
+      if (currentUser) {
+        setLoading(true)
+        try {
+          const userSongs = await getUserSongs(currentUser.uid)
+          setSongs(userSongs)
+        } catch (error) {
+          console.error('Error loading songs:', error)
+        } finally {
+          setLoading(false)
+        }
+      } else {
+        // Clear songs when user logs out
+        setSongs([])
+      }
+    }
+
+    loadSongs()
+  }, [currentUser])
 
   const handleWordClick = (word) => {
     // Clean up the word and navigate to dictionary
@@ -33,23 +59,30 @@ function App() {
     setCurrentDraft(draft)
   }
 
-  const handleSaveSong = (songData) => {
-    if (editingSong) {
-      // Update existing song
-      setSongs(songs.map(song =>
-        song.id === editingSong.id ? { ...songData, id: editingSong.id } : song
-      ))
-      setEditingSong(null)
-    } else {
-      // Create new song
-      const newSong = {
-        ...songData,
-        id: Date.now(),
-        date: new Date().toISOString().split('T')[0]
+  const handleSaveSong = async (songData) => {
+    if (!currentUser) {
+      alert('Please sign in to save songs!')
+      return
+    }
+
+    try {
+      if (editingSong) {
+        // Update existing song in Firestore
+        await updateSong(editingSong.id, songData)
+        setSongs(songs.map(song =>
+          song.id === editingSong.id ? { ...song, ...songData } : song
+        ))
+        setEditingSong(null)
+      } else {
+        // Create new song in Firestore
+        const newSong = await createSong(currentUser.uid, songData)
+        setSongs([newSong, ...songs])
+        // Clear the draft after saving
+        setCurrentDraft({ title: '', lyrics: '' })
       }
-      setSongs([newSong, ...songs])
-      // Clear the draft after saving
-      setCurrentDraft({ title: '', lyrics: '' })
+    } catch (error) {
+      console.error('Error saving song:', error)
+      alert('Failed to save song. Please try again.')
     }
   }
 
@@ -58,8 +91,18 @@ function App() {
     setCurrentView('write')
   }
 
-  const handleDeleteSong = (id) => {
-    setSongs(songs.filter(song => song.id !== id))
+  const handleDeleteSong = async (id) => {
+    if (!currentUser) {
+      return
+    }
+
+    try {
+      await deleteSong(id)
+      setSongs(songs.filter(song => song.id !== id))
+    } catch (error) {
+      console.error('Error deleting song:', error)
+      alert('Failed to delete song. Please try again.')
+    }
   }
 
   const renderView = () => {
