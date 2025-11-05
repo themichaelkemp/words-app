@@ -182,6 +182,8 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
           </button>
         </form>
 
+        {/* Google sign-in temporarily disabled - coming soon! */}
+        {/*
         <div className="auth-divider">
           <span>OR</span>
         </div>
@@ -199,6 +201,7 @@ function Auth({ isOpen, onClose, initialMode = 'login' }) {
           </svg>
           Continue with Google
         </button>
+        */}
 
         <div className="auth-toggle">
           {mode === 'login' ? (
