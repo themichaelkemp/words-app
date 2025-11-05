@@ -23,7 +23,7 @@ export function useKeyboardShortcut(key, callback, modifiers = {}) {
         event.metaKey === meta;
 
       const matchesKey =
-        event.key.toLowerCase() === key.toLowerCase();
+        event.key && key && event.key.toLowerCase() === key.toLowerCase();
 
       if (matchesModifiers && matchesKey) {
         event.preventDefault();
