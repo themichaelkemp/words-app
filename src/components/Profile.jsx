@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 import './Profile.css'
 
 function Profile({ isOpen, onClose }) {
+  const { currentUser, updateUserProfile } = useAuth()
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -9,22 +11,35 @@ function Profile({ isOpen, onClose }) {
     avatar: ''
   })
 
-  // Load profile from localStorage
+  // Load profile from Firebase Auth user
   useEffect(() => {
-    const savedProfile = localStorage.getItem('wordsMatterProfile')
-    if (savedProfile) {
-      setProfile(JSON.parse(savedProfile))
+    if (currentUser) {
+      setProfile({
+        name: currentUser.displayName || '',
+        email: currentUser.email || '',
+        bio: currentUser.firestoreData?.bio || '',
+        avatar: currentUser.photoURL || ''
+      })
     }
-  }, [])
+  }, [currentUser, isOpen])
 
   const handleChange = (field, value) => {
     setProfile({ ...profile, [field]: value })
   }
 
-  const handleSave = () => {
-    localStorage.setItem('wordsMatterProfile', JSON.stringify(profile))
-    alert('Profile saved!')
-    onClose()
+  const handleSave = async () => {
+    try {
+      await updateUserProfile({
+        displayName: profile.name,
+        photoURL: profile.avatar,
+        bio: profile.bio
+      })
+      alert('Profile saved!')
+      onClose()
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      alert('Failed to save profile. Please try again.')
+    }
   }
 
   if (!isOpen) return null

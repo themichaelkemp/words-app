@@ -77,10 +77,17 @@ function Dictionary({ searchWord }) {
   }
 
   useEffect(() => {
-    if (searchWord && searchWord.trim()) {
-      setSearch(searchWord)
-      handleSearch(searchWord)
+    const performSearch = async () => {
+      if (searchWord && searchWord.trim()) {
+        setSearch(searchWord)
+        setLoading(true)
+        const results = await getRhymes(searchWord.trim())
+        setRhymes(results)
+        setActiveTab('perfect')
+        setLoading(false)
+      }
     }
+    performSearch()
   }, [searchWord])
 
   const handleKeyPress = (e) => {
